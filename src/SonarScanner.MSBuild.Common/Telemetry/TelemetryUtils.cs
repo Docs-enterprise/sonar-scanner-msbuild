@@ -30,6 +30,14 @@ public static class TelemetryUtils
         }
     }
 
+    public static void AddCIEnvironmentTelemetry(ITelemetry telemetry)
+    {
+        if (CIPlatformDetector.Detect() is var ciPlatform && ciPlatform is not CIPlatform.None)
+        {
+            telemetry["dotnetenterprise.s4net.ci_platform"] = ciPlatform.ToString();
+        }
+    }
+
     public static void AddTelemetry(ITelemetry telemetry, HostInfo serverInfo)
     {
         if (serverInfo is null)
