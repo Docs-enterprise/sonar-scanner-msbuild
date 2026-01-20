@@ -46,7 +46,7 @@ public class ScannerEngineInputGenerator
     private readonly IAnalysisPropertyProvider cmdLineArgs;
 
     public ScannerEngineInputGenerator(AnalysisConfig analysisConfig, IAnalysisPropertyProvider cmdLineArgs, IRuntime runtime)
-        : this(analysisConfig, runtime ?? throw new ArgumentNullException(nameof(runtime)), new RoslynV1SarifFixer(runtime.Logger), cmdLineArgs, new AdditionalFilesService(runtime))
+        : this(analysisConfig, runtime ?? throw new ArgumentNullException(nameof(runtime)), new RoslynV1SarifFixer(runtime), cmdLineArgs, new AdditionalFilesService(runtime))
     { }
 
     internal ScannerEngineInputGenerator(AnalysisConfig analysisConfig,
@@ -384,6 +384,7 @@ public class ScannerEngineInputGenerator
     {
         if (project.FindAnalysisSetting(reportFilesPropertyKey) is { } reportPathsProperty)
         {
+            runtime.Telemetry[TelemetryKeys.EndstepIsRoslynV1Report] = TelemetryValues.EndstepIsRoslynV1Report.False;
             project.AnalysisSettings.Remove(reportPathsProperty);
             var listOfPaths = reportPathsProperty.Value.Split(RoslynReportPathsDelimiter)
                 .Select(x => fixer.LoadAndFixFile(x, language))
